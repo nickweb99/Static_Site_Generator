@@ -4,15 +4,20 @@ from split import *
 import re
 import os
 import shutil
+import sys
 
 def main():
     #test = TextNode("Test", TextType.ITALIC.value, "https://www.boot.dev")
     #print(test.__repr__())
+    if len(sys.argv) < 2:
+        basepath = "/"
+    else:
+        basepath = sys.argv[1]
     static_path = os.getcwd() + "/static"
     public_path = os.getcwd() + "/public"
     copy_from_static(static_path, public_path)
     #generate_page((os.getcwd() + "/content/index.md"), (os.getcwd() + "/template.html"), (public_path + "/index.html"))
-    generate_pages_recursive((os.getcwd() + "/content"), (os.getcwd() + "/template.html"), public_path)
+    generate_pages_recursive((os.getcwd() + "/content"), (os.getcwd() + "/template.html"), public_path, basepath)
 
 
 def copy_from_static(static_path, public_path):
@@ -39,7 +44,7 @@ def extract_title(markdown):
             return line[2:]
     raise Exception("No h1 tag")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     original = open(from_path).read()
     template = open(template_path).read()
@@ -49,27 +54,21 @@ def generate_page(from_path, template_path, dest_path):
 
     title = extract_title(original)
 
-    new_file = (template.replace("{{ Title }}", title)).replace("{{ Content }}", content)
+    new_file = (template.replace("{{ Title }}", title)).replace("{{ Content }}", content).replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
     f = open(dest_path, "x")
     f.write(new_file)
     f.close()
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     items = os.listdir(dir_path_content)
     for item in items:
         item_path = dir_path_content + "/" + item
         new_path = dest_dir_path + "/" + item
         if os.path.isfile(item_path):
             if item[-3:] == ".md":
-                print(f"This is the item: {item} and the dir_path{dir_path_content}")
-                generate_page(item_path, template_path, new_path[:-3] + ".html")
+                generate_page(item_path, template_path, new_path[:-3] + ".html", basepath)
         else:
             os.mkdir(new_path)
-            generate_pages_recursive(item_path, template_path, new_path)
-
-
-
-   # print(f"original:{original}, template:{template}")
-        
+            generate_pages_recursive(item_path, template_path, new_path, basepath)
 
 main()

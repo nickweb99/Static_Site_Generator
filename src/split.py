@@ -216,7 +216,7 @@ def text_to_children(block, block_type):
             nodes = text_to_textnodes(new_block)
         for node in nodes:
             new_nodes.append(text_node_to_html_node(node))
-            print (text_node_to_html_node(node).to_html())
+           # print (text_node_to_html_node(node).to_html())
     return new_nodes
 
 #def list_split(block, block_type) #shouldnt need this
