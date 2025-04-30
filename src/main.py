@@ -14,7 +14,7 @@ def main():
     else:
         basepath = sys.argv[1]
     static_path = os.getcwd() + "/static"
-    public_path = os.getcwd() + "/public"
+    public_path = os.getcwd() + "/docs"
     copy_from_static(static_path, public_path)
     #generate_page((os.getcwd() + "/content/index.md"), (os.getcwd() + "/template.html"), (public_path + "/index.html"))
     generate_pages_recursive((os.getcwd() + "/content"), (os.getcwd() + "/template.html"), public_path, basepath)
